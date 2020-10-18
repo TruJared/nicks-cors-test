@@ -1,15 +1,59 @@
 <!DOCTYPE html>
 <html>
-
     <head>
-        <meta charset="utf-8"/>
+        <meta charset="utf-8" />
         <title>nicks-cors-test</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script type='text/javascript' src="nicks-cors-test.js"></script>
     </head>
- 
-    <body onLoad='main();'>
 
+    <body onLoad="main();">
+        <p>Will show the response or "error": open dev tools for details</p>
+        <p>To see a succesful request try "https://api.github.com/zen"</p>
+        <form action="">
+            <label for="url">URL:</label>
+            <input type="text" id="url" name="url" value="https://google.com" />
+            <br /><br />
+            <label for="dataType">Data Type:</label>
+            <select name="dataType" id="dataType">
+                <option value="">Auto Assign</option>
+                <option value="html">html</option>
+                <option value="json">json</option>
+                <option value="text">text</option>
+                <option value="plain">plain</option>
+                <option value="xml">xml</option>
+            </select>
+            <input type="submit" value="Test Cors" />
+        </form>
+        <br />
+        <div>Response: <span class="response"></span></div>
     </body>
+    <script>
+        function main() {
+            console.log('main function');
+            console.log(
+                'ajax request to the resource which will require cors enabled'
+            );
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                new FormData(form);
+            });
 
+            form.addEventListener('formdata', function (event) {
+                const values = [...event.formData.values()];
+                const dataType = values[1].length > 0 ? values[1] : null;
+
+                $.ajax(values[0], { dataType })
+                    .done(function (data) {
+                        console.log(data);
+                        document.querySelector('.response').innerText = data;
+                    })
+                    .fail(function (error) {
+                        console.error(error);
+                        document.querySelector('.response').innerText =
+                            error.statusText;
+                    });
+            });
+        }
+    </script>
 </html>
